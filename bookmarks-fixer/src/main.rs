@@ -35,23 +35,23 @@ fn save_bookmarks(bookmarks: Vec<Bookmark>, filename: &String) {
         if bookmark.level == 1 {
             if no_prefix_titles.contains(&bookmark.title.as_str()) {
                 no_prefix = true;
-            }else{
+            } else {
                 no_prefix = false;
                 top_index += 1;
                 second_index = 0;
                 prefix.push_str(&top_index.to_string());
                 prefix.push_str(". ");
             }
-        }else if bookmark.level == 2 {
-            second_index +=1;
-            if !no_prefix{
+        } else if bookmark.level == 2 {
+            second_index += 1;
+            if !no_prefix {
                 prefix.push_str(&top_index.to_string());
                 prefix.push_str(".");
                 prefix.push_str(&second_index.to_string());
                 prefix.push_str(". ");
             }
         }
-        write(& mut content,&bookmark,&prefix);
+        write(&mut content, &bookmark, &prefix);
     }
 
     let mut file = File::create(filename).expect("create saved file error");
@@ -80,16 +80,16 @@ fn fix_all(bookmarks: &mut Vec<Bookmark>, pdf: &String) {
 }
 
 fn fix(bookmark: &mut Bookmark, pdf: &String) {
-    let query_result = query(pdf, bookmark.page_num, &bookmark.title,bookmark.level);
+    let query_result = query(pdf, bookmark.page_num, &bookmark.title, bookmark.level);
     match query_result {
         QueryResult::Found(i) => {
             bookmark.page_num = i;
         }
         QueryResult::Multi(s) => {
-            println!("mutli result of `{},{}` are `{}`, please fix it by hand", bookmark.title,bookmark.level, s)
+            println!("mutli result of `{},{}` are `{}`, please fix it by hand", bookmark.title, bookmark.level, s)
         }
         QueryResult::NotFound() => {
-            println!("no result of `{},{}`, please fix it by hand", bookmark.title,bookmark.level)
+            println!("no result of `{},{}`, please fix it by hand", bookmark.title, bookmark.level)
         }
     }
 }
@@ -100,10 +100,10 @@ enum QueryResult {
     NotFound(),
 }
 
-fn query(pdf: &String, page_num: i32, str: &String,level: i32) -> QueryResult {
+fn query(pdf: &String, page_num: i32, str: &String, level: i32) -> QueryResult {
     use std::process::Command;
     let output = Command::new("mutool")
-        .args(&["run", "search.js", pdf, &page_num.to_string(), &str,&level.to_string()])
+        .args(&["run", "search.js", pdf, &page_num.to_string(), &str, &level.to_string()])
         .output()
         .expect("failed to execute mutool");
     let result = output.stdout;
@@ -120,7 +120,6 @@ fn query(pdf: &String, page_num: i32, str: &String,level: i32) -> QueryResult {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    //print!("{}", args.len());
     if args.len() < 3 {
         println!("Usage: bookmarks-fixer input.pdf bookmarks.txt");
         return;
