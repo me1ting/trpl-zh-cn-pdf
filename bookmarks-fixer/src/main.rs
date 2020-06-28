@@ -2,6 +2,7 @@ use serde::Deserialize;
 use std::env;
 use std::fs::File;
 use std::io::{BufReader, Read, Write};
+use std::process::Command;
 
 #[derive(Deserialize)]
 struct Bookmark {
@@ -10,18 +11,21 @@ struct Bookmark {
     page_num: i32,
 }
 
-fn read_bookmarks(filename: &String) -> Vec<Bookmark> {
-    let file = File::open(filename).expect(format!("{}", filename).as_str());
+// 读取tampermonkey生成的书签
+fn read_bookmarks(filename: &str) -> Vec<Bookmark> {
+    let file = File::open(filename).expect(format!("read file {} error", filename).as_str());
     let mut buf_reader = BufReader::new(file);
     let mut contents = String::new();
-    buf_reader.read_to_string(&mut contents).expect("read bookmarks file error");
+    buf_reader.read_to_string(&mut contents).expect("read bookmarks from file error");
 
     let bookmarks: Vec<Bookmark> = serde_json::from_str(contents.as_str()).expect("parse json error");
 
     return bookmarks;
 }
 
-fn save_bookmarks(bookmarks: Vec<Bookmark>, filename: &String) {
+// 保存书签为PdgCntEditor支持的格式
+fn save_bookmarks(bookmarks: Vec<Bookmark>, filename: &str) {
+    //这些标签不需要序号
     let no_prefix_titles = vec!["Rust 程序设计语言", "前言", "介绍"];
 
     let mut content = String::new();
@@ -58,7 +62,7 @@ fn save_bookmarks(bookmarks: Vec<Bookmark>, filename: &String) {
     file.write_all(content.as_bytes()).expect("write saved file error");
 }
 
-fn write(builder: &mut String, bookmark: &Bookmark, prefix: &String) {
+fn write(builder: &mut String, bookmark: &Bookmark, prefix: &str) {
     if bookmark.level == 2 {
         builder.push_str("\t");
     } else if bookmark.level == 3 {
@@ -73,23 +77,29 @@ fn write(builder: &mut String, bookmark: &Bookmark, prefix: &String) {
     builder.push_str("\r\n");
 }
 
-fn fix_all(bookmarks: &mut Vec<Bookmark>, pdf: &String) {
+fn fix_all(bookmarks: &mut Vec<Bookmark>, pdf: &str) {
+    let mut offset = 0;// 预估偏移量
     for bookmark in bookmarks {
-        fix(bookmark, pdf);
+        offset = fix(bookmark, pdf, offset);
     }
 }
 
-fn fix(bookmark: &mut Bookmark, pdf: &String) {
-    let query_result = query(pdf, bookmark.page_num, &bookmark.title, bookmark.level);
-    match query_result {
+// 预估生成的页码位置不完全正确，需要修复，返回当前标题的实际偏移量，供下个书签修复使用
+fn fix(bookmark: &mut Bookmark, pdf: &str, offset: i32) -> i32 {
+    let query_result = query(pdf, bookmark.page_num + offset, &bookmark.title, bookmark.level);
+    return match query_result {
         QueryResult::Found(i) => {
+            let old_page_num = bookmark.page_num;
             bookmark.page_num = i;
+            i - old_page_num
         }
         QueryResult::Multi(s) => {
-            println!("mutli result of `{},{}` are `{}`, please fix it by hand", bookmark.title, bookmark.level, s)
+            println!("mutli result of `{},{}` are `{}`, please fix it by hand", bookmark.title, bookmark.level, s);
+            offset
         }
-        QueryResult::NotFound() => {
-            println!("no result of `{},{}`, please fix it by hand", bookmark.title, bookmark.level)
+        QueryResult::NotFound => {
+            println!("no result of `{},{}`, please fix it by hand", bookmark.title, bookmark.level);
+            offset
         }
     }
 }
@@ -97,11 +107,10 @@ fn fix(bookmark: &mut Bookmark, pdf: &String) {
 enum QueryResult {
     Found(i32),
     Multi(String),
-    NotFound(),
+    NotFound,
 }
 
-fn query(pdf: &String, page_num: i32, str: &String, level: i32) -> QueryResult {
-    use std::process::Command;
+fn query(pdf: &str, page_num: i32, str: &str, level: i32) -> QueryResult {
     let output = Command::new("mutool")
         .args(&["run", "search.js", pdf, &page_num.to_string(), &str, &level.to_string()])
         .output()
@@ -110,7 +119,7 @@ fn query(pdf: &String, page_num: i32, str: &String, level: i32) -> QueryResult {
     let result_str = String::from_utf8(result).expect("failed to read mutool result");
     let result_str = result_str.trim();
     return if result_str.len() == 0 {
-        QueryResult::NotFound()
+        QueryResult::NotFound
     } else if result_str.contains(",") {
         QueryResult::Multi(result_str.to_string())
     } else {
