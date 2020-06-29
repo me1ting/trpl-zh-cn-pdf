@@ -1,7 +1,6 @@
 use serde::Deserialize;
 use std::env;
-use std::fs::File;
-use std::io::{BufReader, Read, Write};
+use std::fs;
 use std::process::Command;
 
 #[derive(Deserialize)]
@@ -13,10 +12,7 @@ struct Bookmark {
 
 // 读取tampermonkey生成的书签
 fn read_bookmarks(filename: &str) -> Vec<Bookmark> {
-    let file = File::open(filename).expect(format!("read file {} error", filename).as_str());
-    let mut buf_reader = BufReader::new(file);
-    let mut contents = String::new();
-    buf_reader.read_to_string(&mut contents).expect("read bookmarks from file error");
+    let contents = fs::read_to_string(filename).expect("read bookmarks from file error");
 
     let bookmarks: Vec<Bookmark> = serde_json::from_str(contents.as_str()).expect("parse json error");
 
@@ -58,8 +54,7 @@ fn save_bookmarks(bookmarks: Vec<Bookmark>, filename: &str) {
         write(&mut content, &bookmark, &prefix);
     }
 
-    let mut file = File::create(filename).expect("create saved file error");
-    file.write_all(content.as_bytes()).expect("write saved file error");
+    fs::write(filename,content).expect("write saved file error");
 }
 
 fn write(builder: &mut String, bookmark: &Bookmark, prefix: &str) {
