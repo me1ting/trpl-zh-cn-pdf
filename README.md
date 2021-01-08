@@ -11,5 +11,10 @@
 ## 重定位书签
 根据html信息获取的书签，其页号信息存成偏差，需要修复每个书签信息。使用`mupdf`查询title来重定位其所在的页面，这一切使用`bookmarks-fixer`这个rust脚本来完成。
 
+```shell
+PATH=/d/Applications2/mupdf-1.16.0:$PATH
+./bookmarks-fixer.exe input.pdf bookmarks.txt
+```
+
 ## 保存书签到pdf
 使用`FreePic2Pdf`+`PdgCntEditor`来完成。

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         trpl-zh-cn-pdf-bookmarks-exporter
 // @namespace    http://github.com/me1ting/trpl-zh-cn-pdf
-// @version      0.1.2
+// @version      0.2.0
 // @description  export markbooks
 // @author       me1ting
 // @match        https://kaisery.github.io/trpl-zh-cn/print.html
@@ -14,7 +14,7 @@
     const createUI = function () {
         const div = document.createElement("div")
         div.innerHTML = "<button id='exportBookmarks' type='button' style='position:absolute;top:0;left:0;z-index:999'>导出书签</button>"
-        document.querySelector("#menu-bar-sticky-container>.left-buttons").appendChild(div)
+        document.querySelector("#menu-bar>.left-buttons").appendChild(div)
 
         const botton = document.getElementById("exportBookmarks")
         botton.addEventListener("click", generate, false)
@@ -34,8 +34,8 @@
         let bookmarks = []
 
         for (const child of main.children) {
-            if (child.tagName === 'A' && child.classList.contains('header')) {
-                const header = child.firstElementChild
+            if (child.tagName === 'H1' || child.tagName === 'H2') {
+                const header = child
                 let title = header.innerText
                 const pageNum = getPageNum(child.offsetTop)
                 let bookmark = {
@@ -69,20 +69,29 @@
         document.body.removeChild(elementA)
     }
 
-    const addPageBreakForChapter = function (){
-        const headerLinks = document.querySelectorAll('#content>main>a.header')
-        for (const link of headerLinks) {
-            const header = link.firstElementChild
-
-            if (header.tagName === "H1") {
-                const beforeElement = link.previousElementSibling
-                if (beforeElement) {
-                    beforeElement.style.pageBreakAfter = 'always'
-                }
+    const addPageBreakForChapter = function () {
+        const headers = document.querySelectorAll('#content>main>h1')
+        for (const header of headers) {
+            const beforeElement = header.previousElementSibling
+            if (beforeElement) {
+                beforeElement.style.pageBreakAfter = 'always'
+                console.log("add page break to " + header.textContent)
             }
         }
     }
 
+    const removeCodeInHeader = function () {
+        const headers = document.querySelectorAll('#content>main a.header')
+        for (const header of headers){
+           const code = header.querySelector("code");
+           if (code) {
+               header.innerHTML = header.textContent;
+               console.log("remove code in " + header.textContent)
+           }
+        }
+    }
+
     addPageBreakForChapter()
+    removeCodeInHeader()
     createUI()
 })()
