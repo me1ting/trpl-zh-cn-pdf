@@ -8,7 +8,7 @@
     var doc = new Document(scriptArgs[0]);
     var text = scriptArgs[2];
     var countPages = doc.countPages();
-    var pageNum = parseInt(scriptArgs[1]) - 1;//At mupdf environment, page number is begins with 0.
+    var pageNum = parseInt(scriptArgs[1]) - 1;//At mupdf context, page numbers start from 0.
     var level = parseInt(scriptArgs[3]);
 
     var i = Math.max(0, pageNum - 5);

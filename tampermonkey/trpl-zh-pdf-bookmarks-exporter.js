@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         trpl-zh-cn-pdf-bookmarks-exporter
 // @namespace    http://github.com/me1ting/trpl-zh-cn-pdf
-// @version      0.2.0
+// @version      2023.03.22
 // @description  export markbooks
 // @author       me1ting
 // @match        https://kaisery.github.io/trpl-zh-cn/print.html
@@ -69,29 +69,16 @@
         document.body.removeChild(elementA)
     }
 
-    const addPageBreakForChapter = function () {
-        const headers = document.querySelectorAll('#content>main>h1')
-        for (const header of headers) {
-            const beforeElement = header.previousElementSibling
-            if (beforeElement) {
-                beforeElement.style.pageBreakAfter = 'always'
-                console.log("add page break to " + header.textContent)
-            }
-        }
-    }
-
     const removeCodeInHeader = function () {
         const headers = document.querySelectorAll('#content>main a.header')
         for (const header of headers){
            const code = header.querySelector("code");
            if (code) {
                header.innerHTML = header.textContent;
-               console.log("remove code in " + header.textContent)
            }
         }
     }
 
-    addPageBreakForChapter()
     removeCodeInHeader()
     createUI()
 })()
