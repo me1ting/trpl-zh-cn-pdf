@@ -1,20 +1,54 @@
 # trpl-zh-cn-pdf
 [trpl-zh-cn](https://github.com/KaiserY/trpl-zh-cn/)原滋原味的mdBook风格pdf版本，使用chrome打印，并使用脚本生成书签。
 
-# 基本原理
-## 生成pdf
-使用mdBook的打印功能即可，它会调用chrome的打印功能。
+# Usage
+## 安装Tampermonkey和脚本
+安装`Tampermonkey` chrome插件，并复制`tampermonkey/trpl-zh-pdf-bookmarks-exporter.js`的内容到Tampermonkey的新建脚本中。
 
-## 获取书签
-根据mdBook的html页面中的header标签，可以获取书签信息，使用element的位置可以获取其所属页号，这一切可以交给`TamperMonkey`脚本来完成。
+该脚本提供**打印优化**和生成**书签草案**。
+
+打印优化包括：
+
+- 移除title中的code样式
+
+在[打印页面](https://kaisery.github.io/trpl-zh-cn/print.html)，打印完成，或取消打印对话框后，在页面的左上角会看到`导出书签`按钮，点击即可下载`书签草案`。
+
+## 生成pdf和书签草案
+在[打印页面](https://kaisery.github.io/trpl-zh-cn/print.html)，选择`保存为pdf`，取消勾选`更多设置`-`选项`-`页眉和页脚`。
+
+在chrome完成加载预览后，点击保存为pdf。然后点击`导出书签`按钮，生成书签草案。
 
 ## 重定位书签
-根据html信息获取的书签，其页号信息存成偏差，需要修复每个书签信息。使用`mupdf`查询title来重定位其所在的页面，这一切使用`bookmarks-fixer`这个rust脚本来完成。
+根据html页面生成的书签草案可能存在偏移，需要纠正。这里需要使用到`bookmarks-fixer.exe`（即本仓库bookmarks-fixer目录中的rust项目），[mupdf](https://mupdf.com/releases/)的`mutool.exe`，`search.js`。
 
-```shell
-PATH=/d/Applications2/mupdf-1.16.0:$PATH
+将这3个文件，以及pdf文件和书签草案拷贝到同一文件夹下，执行以下命令生成重定位的书签文件：
+```
+# git bash
+PATH=.:$PATH
 ./bookmarks-fixer.exe input.pdf bookmarks.txt
 ```
+其中`input.pdf`是pdf文件名，`bookmarks.txt`是书签草案文件名。
 
-## 保存书签到pdf
-使用`FreePic2Pdf`+`PdgCntEditor`来完成。
+重定位的书签文件名为书签草案文件名添加`.fixed`后缀。
+
+### 手动修复
+如果以上命令提示`...please fix it by hand`，说明存在多个匹配结果或者无匹配结果，你需要编辑重定位的书签文件，添加目标`level`的`title`的正确书签信息。
+
+## 保存书签到pdf文件
+重定位的书签文件采用的是`FreePic2Pdf`+`PdgCntEditor`软件所支持格式，你可以用这两个软件，但由于Virustotal报毒的原因，我没有使用这两个软件。
+
+我目前使用的是自己写的[pdfbookmark](https://github.com/me1ting/pdfbookmark)：
+
+生成空书签文件：
+```
+pdfbookmark load input.pdf
+```
+会生成一个`.bookmarks`文件。编辑该文件，并将重定位的书签内容覆盖到该文件保存。
+
+保存文件到pdf：
+```
+pdfbookmark save input.pdf input_saved.pdf
+```
+
+## 压缩pdf
+Google搜索`pdf 压缩`，找一个在线压缩网站来进行压缩。
