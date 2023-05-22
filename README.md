@@ -25,11 +25,11 @@
 ```
 # git bash
 PATH=.:$PATH
-./bookmarks-fixer.exe input.pdf bookmarks.txt
+./bookmarks-fixer.exe trpl.pdf 1684768338706.txt
 ```
-其中`input.pdf`是pdf文件名，`bookmarks.txt`是书签草案文件名。
+其中`trpl.pdf`是pdf文件名，`1684768338706.txt`是书签草案文件名。
 
-重定位的书签文件名为书签草案文件名添加`.fixed`后缀。
+重定位的书签文件名为书签草案文件名添加`.fixed`后缀，如`1684768338706.txt.fixed`。
 
 ### 手动修复
 如果以上命令提示`...please fix it by hand`，说明存在多个匹配结果或者无匹配结果，你需要编辑重定位的书签文件，添加目标`level`的`title`的正确书签信息。
@@ -37,18 +37,14 @@ PATH=.:$PATH
 ## 保存书签到pdf文件
 重定位的书签文件采用的是`FreePic2Pdf`+`PdgCntEditor`软件所支持格式，你可以用这两个软件，但由于Virustotal报毒的原因，我没有使用这两个软件。
 
-我目前使用的是自己写的[pdfbookmark](https://github.com/me1ting/pdfbookmark)：
+我目前使用的是自己写的[pdfbookmark](https://github.com/me1ting/pdfbookmark)，下载并解压到`bookmarks-fixer.exe`所在文件夹。
 
-生成空书签文件：
+保存书签到pdf：
 ```
-pdfbookmark load input.pdf
+mv 1684768338706.txt.fixed trpl.pdf.bookmarks
+pdfbookmark save trpl.pdf trpl_saved.pdf
 ```
-会生成一个`.bookmarks`文件。编辑该文件，并将重定位的书签内容覆盖到该文件保存。
-
-保存文件到pdf：
-```
-pdfbookmark save input.pdf input_saved.pdf
-```
+生成的`trpl_saved.pdf`就是带有书签的pdf文件。
 
 ## 压缩pdf
 Google搜索`pdf 压缩`，找一个在线压缩网站来进行压缩。
