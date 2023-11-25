@@ -6,7 +6,7 @@
 
 ## 安装Tampermonkey和脚本
 
-安装`Tampermonkey` chrome插件，并复制`tampermonkey/bookmarks.js`的内容到Tampermonkey的新建脚本中。
+安装`Tampermonkey` chrome插件，并复制`tampermonkey/bookmarks.js`的内容到Tampermonkey的新建脚本中并保存。
 
 该脚本提供**打印优化**和生成**书签草案**。
 
@@ -28,7 +28,7 @@
 根据html页面生成的书签草案存在偏移，需要纠正。这里需要使用到`fixer.exe`（即fixer目录中的命令行工具），[mupdf](https://mupdf.com/releases/)的`mutool.exe`，`search.js`。
 
 将这3个文件，以及pdf文件和书签草案拷贝到同一文件夹下，执行以下命令生成重定位的书签文件：
-```
+```bash
 # git bash
 PATH=.:$PATH
 ./fixer.exe trpl.pdf bookmarks.txt
@@ -56,14 +56,14 @@ PATH=.:$PATH
 ├─bookmarks.txt.fixed
 ├─fixer.exe
 ├─mutool.exe
-├─fixer.exe
+├─search.js
 └─trpl.pdf
 ```
 
 保存书签到pdf（需要Java8及其以上执行环境）：
 
-```
-# gitbash
+```bash
+# git bash
 PATH=./bin:$PATH
 mv bookmarks.txt.fixed trpl.pdf.bookmarks
 pdfbookmark save trpl.pdf trpl_saved.pdf
