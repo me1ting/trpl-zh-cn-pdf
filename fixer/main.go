@@ -148,7 +148,7 @@ func locate(pdfFile string, bookmark *Bookmark, offset int) (newOffset int, err 
 func main() {
 	if len(os.Args) < 3 {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
-		fmt.Fprintf(os.Stderr, "bookmarks-fixer input.pdf bookmarks.txt")
+		fmt.Fprintf(os.Stderr, "fixer input.pdf bookmarks.txt")
 		os.Exit(1)
 	}
 
