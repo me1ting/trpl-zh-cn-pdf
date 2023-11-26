@@ -21,8 +21,8 @@ type Bookmark struct {
 type Bookmarks []Bookmark
 
 // 这些 title 不需要序号
-var TITLES_WITHOUT_SEQS = []string{"Rust 程序设计语言", "前言", "介绍"}
-var TOP_LEVEL, SECOND_LEVEL = 1, 2
+var TitlesWithoutSeqs = []string{"Rust 程序设计语言", "前言", "介绍"}
+var TopLevel, SecondLevel = 1, 2
 
 func (bookmarks Bookmarks) String() string {
 	var buffer bytes.Buffer
@@ -34,8 +34,8 @@ func (bookmarks Bookmarks) String() string {
 	for _, bookmark := range bookmarks {
 		seqs := ""
 
-		if bookmark.Level == TOP_LEVEL {
-			if SliceContains(TITLES_WITHOUT_SEQS, bookmark.Title) {
+		if bookmark.Level == TopLevel {
+			if SliceContains(TitlesWithoutSeqs, bookmark.Title) {
 				noSeqs = true
 			} else {
 				noSeqs = false
@@ -43,7 +43,7 @@ func (bookmarks Bookmarks) String() string {
 				secondSeq = 0
 				seqs = fmt.Sprintf("%d ", topSeq)
 			}
-		} else if bookmark.Level == SECOND_LEVEL {
+		} else if bookmark.Level == SecondLevel {
 			secondSeq += 1
 			if !noSeqs {
 				seqs = fmt.Sprintf("%d.%d ", topSeq, secondSeq)
