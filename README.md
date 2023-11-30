@@ -2,6 +2,10 @@
 
 [trpl-zh-cn](https://github.com/KaiserY/trpl-zh-cn/)原滋原味的mdBook风格pdf版本，使用chrome打印，并使用脚本生成书签。
 
+# 下载
+
+[已生成好的PDF](https://github.com/me1ting/trpl-zh-cn-pdf/releases)
+
 # Usage
 
 ## 安装Tampermonkey和脚本
