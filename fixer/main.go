@@ -21,7 +21,7 @@ type Bookmark struct {
 type Bookmarks []Bookmark
 
 // 这些 title 不需要序号
-var TitlesWithoutSeqs = []string{"Rust 程序设计语言", "前言", "介绍"}
+var TitlesWithoutSeqs = []string{"Rust 程序设计语言", "前言", "简介"}
 var TopLevel, SecondLevel = 1, 2
 
 func (bookmarks Bookmarks) String() string {
