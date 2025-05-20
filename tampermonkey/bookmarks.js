@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         trpl-zh-cn-pdf-bookmarks
 // @namespace    http://github.com/me1ting/trpl-zh-cn-pdf
-// @version      2023.11.25
+// @version      2025.05.21
 // @description  export bookmarks
 // @author       me1ting
 // @match        https://kaisery.github.io/trpl-zh-cn/print.html
@@ -11,22 +11,22 @@
 (function () {
     'use strict'
 
-    const createUI = function () {
-        const botton = document.createElement('button');
-        botton.textContent = '书签';
+    function createUI() {
+        const botton = document.createElement('button')
+        botton.textContent = '书签'
         const leftMenus = document.querySelector("#menu-bar>.right-buttons")
         leftMenus.insertBefore(botton, leftMenus.firstChild)
-        botton.addEventListener("click", handleButtonClick, false)
+        botton.addEventListener("click", handleBookmarkButtonClick, false)
     }
 
-    const handleButtonClick = function () {
+    function handleBookmarkButtonClick() {
         const bookmarks = createBookmarks()
         if (bookmarks) {
             saveBookmarks(bookmarks)
         }
     }
 
-    const createBookmarks = function () {
+    function createBookmarks() {
         const main = document.getElementById("content").firstElementChild
 
         let bookmarks = []
@@ -52,11 +52,11 @@
         return bookmarks
     }
 
-    const getPageNum = function (offsetTop) {
+    function getPageNum(offsetTop) {
         return Math.ceil(offsetTop / 955)
     }
 
-    const saveBookmarks = function (bookmarks) {
+    function saveBookmarks(bookmarks) {
         const elementA = document.createElement('a')
         elementA.setAttribute('href', 'data:text/plain;charset=utf-8,' + JSON.stringify(bookmarks))
         elementA.setAttribute('download', "bookmarks" + new Date() + ".txt")
@@ -66,25 +66,25 @@
         document.body.removeChild(elementA)
     }
 
-    const removeCodeInHeader = function () {
+    function removeCodeInHeader() {
         const headers = document.querySelectorAll('#content>main a.header')
         for (const header of headers) {
-            const code = header.querySelector("code");
+            const code = header.querySelector("code")
             if (code) {
-                header.innerHTML = header.textContent;
+                header.innerHTML = header.textContent
             }
         }
     }
 
-    const removeOriginalLinks = function () {
-        const blockQuotesAfterH1 = document.querySelectorAll("h1 + blockquote");
+    function removeOriginalLinks() {
+        const blockQuotesAfterH1 = document.querySelectorAll("h1 + blockquote")
         for (const quote of blockQuotesAfterH1) {
             if (isOriginalLinks(quote)) {
                 quote.remove()
             }
         }
 
-        const blockQuotesAfterH2 = document.querySelectorAll("h2 + blockquote");
+        const blockQuotesAfterH2 = document.querySelectorAll("h2 + blockquote")
         for (const quote of blockQuotesAfterH2) {
             if (isOriginalLinks(quote)) {
                 quote.remove()
@@ -93,13 +93,19 @@
 
     }
 
-    const isOriginalLinks = function (quote) {
+    function isOriginalLinks(quote) {
         const text = quote.innerText
         const slices = text.split("\n")
         return slices.length == 2 && slices[0].endsWith(".md") && slices[1].startsWith("commit ")
     }
 
+    function overrideStyles(){
+        document.documentElement.style.fontFamily = '"Microsoft YaHei", "微软雅黑", sans-serif'
+    }
+
+
     removeCodeInHeader()
     removeOriginalLinks()
+    overrideStyles()
     createUI()
 })()
