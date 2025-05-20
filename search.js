@@ -1,6 +1,6 @@
 (function () {
     if (scriptArgs.length < 4) {
-        print("usage: mutool run input.pdf pageNum title level");
+        print("usage: mutool run search.js input.pdf pageNum title level");
         print("This scrpit will serach `string` from `pageNum - 5` to `pageNum + 5`(no contains).");
         return;
     }
