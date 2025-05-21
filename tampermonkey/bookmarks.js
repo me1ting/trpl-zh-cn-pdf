@@ -5,11 +5,15 @@
 // @description  export bookmarks
 // @author       me1ting
 // @match        https://kaisery.github.io/trpl-zh-cn/print.html
-// @grant        none
+// @grant        GM_addStyle
 // ==/UserScript==
 
 (function () {
     'use strict'
+
+    GM_addStyle(`
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+    `)
 
     function createUI() {
         const botton = document.createElement('button')
@@ -99,8 +103,8 @@
         return slices.length == 2 && slices[0].endsWith(".md") && slices[1].startsWith("commit ")
     }
 
-    function overrideStyles(){
-        document.documentElement.style.fontFamily = '"Microsoft YaHei", "微软雅黑", sans-serif'
+    function overrideStyles() {
+        document.documentElement.style.fontFamily = '"Open Sans", "Noto Sans SC", sans-serif'
     }
 
 
