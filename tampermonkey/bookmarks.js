@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         trpl-zh-cn-pdf-bookmarks
 // @namespace    http://github.com/me1ting/trpl-zh-cn-pdf
-// @version      2026.05.24
+// @version      2026.07.18
 // @description  export bookmarks
 // @author       me1ting
 // @match        https://kaisery.github.io/trpl-zh-cn/print.html
@@ -96,7 +96,7 @@
         }
 
         const paragraphsAfterH3 = main.querySelectorAll("h3 + p")
-        for (const p of paragraphsAfterH2) {
+        for (const p of paragraphsAfterH3) {
             if (isOriginalLinks(p)) {
                 p.remove()
                 //console.log(`remove original link: ${p.innerText}`)
@@ -133,7 +133,7 @@
                 continue
             }
             // 大多数情况下h1与h2重复，可以移除h1保留h2，或移除h2降级h1
-            // 这里为了与兼容后续特例，采用后者
+            // 这里为了兼容后续特例，采用后者
             if (nextSibling.tagName === "H2") {
                 nextSibling.remove()
             } else if (nextSibling.tagName === "H3") {
